@@ -6,10 +6,17 @@ declare global {
         tag: string | ((...args: any) => ReactNode);
     };
 
-    export type MountFunction = { dependenciesCurrent: any[]; mount: () => Function | void; dependenciesPrevious?: any[]; unmount?: Function };
+    export type FunctionLifecycle<T extends any = Function | void> = {
+        depCurr: any[];
+        func: () => T;
+        depPrev?: any[];
+        unmount?: Function;
+    };
 
     export type ReactNode = {
-        _effects: MountFunction[];
+        _callbacks: FunctionLifecycle<void>[];
+        _callbacksCursor: number;
+        _effects: FunctionLifecycle[];
         _effectsCursor: number;
         _states: any[];
         _statesCursor: number;

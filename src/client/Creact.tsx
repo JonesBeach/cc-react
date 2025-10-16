@@ -41,11 +41,11 @@ function containsNodeOrIsNode(source: ReactNode, target: ReactNode): boolean {
     return source === target;
 }
 
-function dependenciesMatch(mount: MountFunction) {
-    for (let i = 0; i < mount.dependenciesCurrent.length; i++) {
+function dependenciesMatch(mount: FunctionLifecycle) {
+    for (let i = 0; i < mount.depCurr.length; i++) {
         // there's something terribly wrong if the arrays are not the same length
-        const currDependency = mount.dependenciesCurrent[i];
-        const previousDependency = mount.dependenciesPrevious![i];
+        const currDependency = mount.depCurr[i];
+        const previousDependency = mount.depPrev![i];
 
         if (currDependency !== previousDependency) {
             return false;
@@ -65,7 +65,18 @@ function dependenciesMatch(mount: MountFunction) {
 // /////////////////
 const React = {
     createElement: (tag: CreateElementParams["tag"], props: CreateElementParams["props"], ...children: CreateElementParams["children"]): ReactNode => {
-        const result: ReactNode = { _effects: [], _effectsCursor: 0, _states: [], _statesCursor: 0, props, children, index: 0, tag: "" };
+        const result: ReactNode = {
+            _callbacks: [],
+            _callbacksCursor: 0,
+            _effects: [],
+            _effectsCursor: 0,
+            _states: [],
+            _statesCursor: 0,
+            props,
+            children,
+            index: 0,
+            tag: "",
+        };
 
         if (GLOBALS.APP === undefined) {
             GLOBALS.APP = tag;
@@ -167,7 +178,7 @@ const mountEvents = (node: ReactNodeGenerated): void => {
     }
 
     for (const effect of node._effects) {
-        if (effect.dependenciesPrevious !== undefined && dependenciesMatch(effect)) {
+        if (effect.depPrev !== undefined && dependenciesMatch(effect)) {
             continue;
         }
 
@@ -175,7 +186,7 @@ const mountEvents = (node: ReactNodeGenerated): void => {
             effect.unmount();
         }
 
-        effect.unmount = effect.mount() ?? undefined;
+        effect.unmount = effect.func() ?? undefined;
     }
 };
 
@@ -234,19 +245,35 @@ export const useState = <T extends any>(defaultValue?: T): [T, (v: T) => T] => {
     return [state, setState];
 };
 
-export const useEffect = (mount: () => Function | void, dependencies: any[]) => {
+export const useEffect = (func: () => Function | void, dependencies: any[]) => {
     const element = GLOBALS.NODE_CURRENT!;
     const cursor = element._effectsCursor;
 
     if (element._effects[cursor] === undefined) {
-        element._effects[cursor] = { dependenciesCurrent: dependencies, mount };
+        element._effects[cursor] = { depCurr: dependencies, func: func };
     } else {
-        element._effects[cursor].dependenciesPrevious = element._effects[cursor].dependenciesCurrent;
-        element._effects[cursor].dependenciesCurrent = dependencies;
-        element._effects[cursor].mount = mount;
+        element._effects[cursor].depPrev = element._effects[cursor].depCurr;
+        element._effects[cursor].depCurr = dependencies;
+        element._effects[cursor].func = func;
     }
 
     element._effectsCursor++;
+};
+
+export const useCallback = (func: () => void, dependencies: any[]) => {
+    const element = GLOBALS.NODE_CURRENT!;
+    const cursor = element._callbacksCursor;
+
+    if (element._callbacks[cursor] === undefined) {
+        element._callbacks[cursor] = { depCurr: dependencies, func };
+    } else {
+        element._callbacks[cursor].depPrev = element._callbacks[cursor].depCurr;
+        element._callbacks[cursor].depCurr = dependencies;
+        element._callbacks[cursor].func = func;
+    }
+
+    element._callbacksCursor++;
+    return func;
 };
 
 export default React;
