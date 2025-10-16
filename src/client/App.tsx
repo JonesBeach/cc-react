@@ -1,4 +1,5 @@
 import React, { render, useState } from "./Creact.tsx";
+import Bottom from "./components/Bottom.tsx";
 import Container from "./components/Container.tsx";
 import TextInput from "./components/TextInput.tsx";
 
@@ -17,12 +18,12 @@ const App = ({ environment }: Props) => {
             <p>I am a {test}</p>
             <TextInput />
             <Container />
-            <Container />
-            <Container />
+            <Bottom type="s" />
+            <Bottom type="s" />
             <TextInput />
-            <Container />
-            <Container />
-            <Container />
+            <Bottom type="s" />
+            <Bottom type="s" />
+            <Bottom type="s" />
         </div>
     );
 };

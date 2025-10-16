@@ -5,7 +5,9 @@ type Props = {
 };
 
 const Bottom = ({ type }: Props) => {
-    return <div class={type}>Bottom</div>;
+    console.log("render", "Bottom");
+
+    return <div class={type}>Bottoms</div>;
 };
 
 export default Bottom;

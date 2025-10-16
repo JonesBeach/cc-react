@@ -1,17 +1,19 @@
 declare global {
     // TODO: fix (...args: any)
     export type CreateElementParams = {
-        children: (ReactNode | string)[];
+        children: (ReactNode | unknown)[];
         props: Record<string, any> | null;
         tag: string | ((...args: any) => ReactNode);
     };
 
+    export type MountFunction = { dependenciesCurrent: any[]; mount: () => Function | void; dependenciesPrevious?: any[]; unmount?: Function };
+
     export type ReactNode = {
-        _effects: any[];
+        _effects: MountFunction[];
         _effectsCursor: number;
         _states: any[];
         _statesCursor: number;
-        children: (ReactNode | string)[];
+        children: (ReactNode | unknown)[];
         index: number;
         props: Record<string, any> | null;
         tag: string;

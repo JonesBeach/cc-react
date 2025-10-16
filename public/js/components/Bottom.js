@@ -1,5 +1,6 @@
 import React from "../Creact.js";
 const Bottom = ({ type }) => {
-    return React.createElement("div", { class: type }, "Bottom");
+    console.log("render", "Bottom");
+    return React.createElement("div", { class: type }, "Bottoms");
 };
 export default Bottom;

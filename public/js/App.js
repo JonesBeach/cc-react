@@ -1,4 +1,5 @@
 import React, { render, useState } from "./Creact.js";
+import Bottom from "./components/Bottom.js";
 import Container from "./components/Container.js";
 import TextInput from "./components/TextInput.js";
 const App = ({ environment }) => {
@@ -11,11 +12,11 @@ const App = ({ environment }) => {
             test),
         React.createElement(TextInput, null),
         React.createElement(Container, null),
-        React.createElement(Container, null),
-        React.createElement(Container, null),
+        React.createElement(Bottom, { type: "s" }),
+        React.createElement(Bottom, { type: "s" }),
         React.createElement(TextInput, null),
-        React.createElement(Container, null),
-        React.createElement(Container, null),
-        React.createElement(Container, null)));
+        React.createElement(Bottom, { type: "s" }),
+        React.createElement(Bottom, { type: "s" }),
+        React.createElement(Bottom, { type: "s" })));
 };
 render(React.createElement(App, { environment: "dev" }), document.getElementById("myapp"));

@@ -41,6 +41,20 @@ function containsNodeOrIsNode(source: ReactNode, target: ReactNode): boolean {
     return source === target;
 }
 
+function dependenciesMatch(mount: MountFunction) {
+    for (let i = 0; i < mount.dependenciesCurrent.length; i++) {
+        // there's something terribly wrong if the arrays are not the same length
+        const currDependency = mount.dependenciesCurrent[i];
+        const previousDependency = mount.dependenciesPrevious![i];
+
+        if (currDependency !== previousDependency) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 // TODO:
 // create virtual DOM for current state
 // create virtual DOM for updated state
@@ -93,8 +107,8 @@ const generate = (node: ReactNodeGenerated, container: HTMLElement) => {
             continue;
         }
 
-        if (child?.toString() !== undefined) {
-            el.append(child?.toString());
+        if (child !== undefined) {
+            el.append(child as any); // not toString to have the same bug as react
             continue;
         }
     }
@@ -109,26 +123,27 @@ const generate = (node: ReactNodeGenerated, container: HTMLElement) => {
     return node;
 };
 
-const renderAgain = (el: ReactNodeGenerated): void => {
-    const result = containsNodeOrIsNode(GLOBALS.NODE_CURRENT_ROOT!, el);
+const renderAgain = (node: ReactNodeGenerated): void => {
+    const result = containsNodeOrIsNode(GLOBALS.NODE_CURRENT_ROOT!, node);
 
     if (!result) {
         throw new Error("Unexpected error: the element should exist!");
     }
 
-    GLOBALS.NODE_CURRENT = el;
-    el._statesCursor = 0;
+    GLOBALS.NODE_CURRENT = node;
+    node._statesCursor = 0;
+    node._effectsCursor = 0;
 
-    if (el?.component !== undefined) {
-        GLOBALS.NODE_CURRENT = el;
-        const result = el.component(el.props, ...el.children);
-        el.children = result.children;
-        el.props = result.props;
-        el.tag = result.tag;
+    if (node?.component !== undefined) {
+        GLOBALS.NODE_CURRENT = node;
+        const result = node.component(node.props, ...node.children);
+        node.children = result.children;
+        node.props = result.props;
+        node.tag = result.tag;
     }
 
-    for (let i = 0; i < el.children.length; i++) {
-        const child = el.children[i];
+    for (let i = 0; i < node.children.length; i++) {
+        const child = node.children[i];
 
         if (isReactElement(child)) {
             const childReact = child as ReactNodeGenerated;
@@ -136,46 +151,69 @@ const renderAgain = (el: ReactNodeGenerated): void => {
         }
     }
 
-    if (el === GLOBALS.NODE_CURRENT_ROOT_ANCHOR) {
-        generate(el, (GLOBALS.NODE_CURRENT_ROOT_ANCHOR as ReactNodeGenerated).element.parentElement!);
+    if (node === GLOBALS.NODE_CURRENT_ROOT_ANCHOR) {
+        generate(node, (GLOBALS.NODE_CURRENT_ROOT_ANCHOR as ReactNodeGenerated).element.parentElement!);
+        mountEvents(node as ReactNodeGenerated);
         GLOBALS.NODE_CURRENT_ROOT_ANCHOR = undefined;
+    }
+};
+
+const mountEvents = (node: ReactNodeGenerated): void => {
+    for (const child of node.children) {
+        if (isReactElement(child)) {
+            const childReact = child as ReactNodeGenerated;
+            mountEvents(childReact);
+        }
+    }
+
+    for (const effect of node._effects) {
+        if (effect.dependenciesPrevious !== undefined && dependenciesMatch(effect)) {
+            continue;
+        }
+
+        if (effect.unmount) {
+            effect.unmount();
+        }
+
+        effect.unmount = effect.mount() ?? undefined;
     }
 };
 
 // //////////////////
 // //// EXPORTED ////
 // //////////////////
-export const render = (element: ReactNode, container: HTMLElement): ReactNode => {
+export const render = (node: ReactNode, container: HTMLElement): ReactNode => {
     if (GLOBALS.NODE_CURRENT_ROOT === undefined) {
-        GLOBALS.NODE_CURRENT_ROOT = element;
+        GLOBALS.NODE_CURRENT_ROOT = node;
     }
 
-    if (element?.component !== undefined) {
-        GLOBALS.NODE_CURRENT = element;
+    if (node?.component !== undefined) {
+        GLOBALS.NODE_CURRENT = node;
         GLOBALS.ELEMENT_CURRENT_PARENT = container;
-        const { children, props, tag } = element.component(element.props, ...element.children);
-        element.children = children;
-        element.props = props;
-        element.tag = tag;
+        const { children, props, tag } = node.component(node.props, ...node.children);
+        node.children = children;
+        node.props = props;
+        node.tag = tag;
     }
 
-    for (let i = 0; i < element.children.length; i++) {
-        const child = element.children[i];
+    for (let i = 0; i < node.children.length; i++) {
+        const child = node.children[i];
 
         if (isReactElement(child)) {
             const childReact = child as ReactNode;
             const result = render(childReact, container);
             result.index = i;
-            element.children[i] = result;
+            node.children[i] = result;
         }
     }
 
-    if (element === GLOBALS.NODE_CURRENT_ROOT && GLOBALS._FIRST_TIME) {
-        generate(element as ReactNodeGenerated, container);
+    if (node === GLOBALS.NODE_CURRENT_ROOT && GLOBALS._FIRST_TIME) {
+        generate(node as ReactNodeGenerated, container);
+        mountEvents(node as ReactNodeGenerated);
         GLOBALS._FIRST_TIME = false;
     }
 
-    return element;
+    return node;
 };
 
 export const useState = <T extends any>(defaultValue?: T): [T, (v: T) => T] => {
@@ -194,6 +232,21 @@ export const useState = <T extends any>(defaultValue?: T): [T, (v: T) => T] => {
     };
 
     return [state, setState];
+};
+
+export const useEffect = (mount: () => Function | void, dependencies: any[]) => {
+    const element = GLOBALS.NODE_CURRENT!;
+    const cursor = element._effectsCursor;
+
+    if (element._effects[cursor] === undefined) {
+        element._effects[cursor] = { dependenciesCurrent: dependencies, mount };
+    } else {
+        element._effects[cursor].dependenciesPrevious = element._effects[cursor].dependenciesCurrent;
+        element._effects[cursor].dependenciesCurrent = dependencies;
+        element._effects[cursor].mount = mount;
+    }
+
+    element._effectsCursor++;
 };
 
 export default React;
