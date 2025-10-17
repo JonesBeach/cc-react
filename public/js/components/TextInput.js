@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "../Creact.js";
+import React, { useCallback, useEffect, useMemo, useState } from "../Creact.js";
 import Bottom from "./Bottom.js";
 const TextInput = () => {
     const [text, setText] = useState("default");
@@ -10,6 +10,7 @@ const TextInput = () => {
     const onclick2 = () => {
         setBool(!bool);
     };
+    const memo = useMemo(() => text, [bool]);
     const callback = useCallback(() => {
         console.log("callback", bool);
     }, [bool]);
@@ -20,6 +21,7 @@ const TextInput = () => {
             console.log("unmounting", "TextInput", bool);
         };
     }, [bool]);
+    console.log("memo", memo);
     return (React.createElement("div", null,
         React.createElement(Bottom, { type: text }),
         React.createElement("button", { onclick: onclick1 }, text),

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "../Creact.tsx";
+import React, { useCallback, useEffect, useMemo, useState } from "../Creact.tsx";
 import Bottom from "./Bottom.tsx";
 
 const TextInput = () => {
@@ -15,6 +15,8 @@ const TextInput = () => {
         setBool(!bool);
     };
 
+    const memo = useMemo(() => text, [bool]);
+
     const callback = useCallback(() => {
         console.log("callback", bool);
     }, [bool]);
@@ -27,6 +29,8 @@ const TextInput = () => {
             console.log("unmounting", "TextInput", bool);
         };
     }, [bool]);
+
+    console.log("memo", memo);
 
     return (
         <div>

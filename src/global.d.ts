@@ -18,6 +18,8 @@ declare global {
         _callbacksCursor: number;
         _effects: FunctionLifecycle[];
         _effectsCursor: number;
+        _memos: (FunctionLifecycle<any> & { value: any })[];
+        _memosCursor: number;
         _states: any[];
         _statesCursor: number;
         children: (ReactNode | unknown)[];

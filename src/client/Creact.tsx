@@ -70,6 +70,8 @@ const React = {
             _callbacksCursor: 0,
             _effects: [],
             _effectsCursor: 0,
+            _memos: [],
+            _memosCursor: 0,
             _states: [],
             _statesCursor: 0,
             props,
@@ -142,8 +144,10 @@ const renderAgain = (node: ReactNodeGenerated): void => {
     }
 
     GLOBALS.NODE_CURRENT = node;
-    node._statesCursor = 0;
+    node._callbacksCursor = 0;
     node._effectsCursor = 0;
+    node._memosCursor = 0;
+    node._statesCursor = 0;
 
     if (node?.component !== undefined) {
         GLOBALS.NODE_CURRENT = node;
@@ -227,6 +231,59 @@ export const render = (node: ReactNode, container: HTMLElement): ReactNode => {
     return node;
 };
 
+export const useCallback = (func: FunctionLifecycle<void>["func"], dependencies: any[]) => {
+    const element = GLOBALS.NODE_CURRENT!;
+    const cursor = element._callbacksCursor;
+
+    if (element._callbacks[cursor] === undefined) {
+        element._callbacks[cursor] = { depCurr: dependencies, func };
+    } else {
+        element._callbacks[cursor].depPrev = element._callbacks[cursor].depCurr;
+        element._callbacks[cursor].depCurr = dependencies;
+        element._callbacks[cursor].func = func;
+    }
+
+    element._callbacksCursor++;
+    return func;
+};
+
+export const useEffect = (func: FunctionLifecycle["func"], dependencies: any[]) => {
+    const element = GLOBALS.NODE_CURRENT!;
+    const cursor = element._effectsCursor;
+
+    if (element._effects[cursor] === undefined) {
+        element._effects[cursor] = { depCurr: dependencies, func };
+    } else {
+        element._effects[cursor].depPrev = element._effects[cursor].depCurr;
+        element._effects[cursor].depCurr = dependencies;
+        element._effects[cursor].func = func;
+    }
+
+    element._effectsCursor++;
+};
+
+export const useMemo = <T extends any>(func: FunctionLifecycle<T>["func"], dependencies: any[]) => {
+    const element = GLOBALS.NODE_CURRENT!;
+    const cursor = element._memosCursor;
+
+    if (element._memos[cursor] === undefined) {
+        element._memos[cursor] = { depCurr: dependencies, func, value: func() };
+    } else {
+        element._memos[cursor].depPrev = element._memos[cursor].depCurr;
+        element._memos[cursor].depCurr = dependencies;
+
+        if (dependenciesMatch(element._memos[cursor])) {
+            return element._memos[cursor].value;
+        }
+
+        element._memos[cursor].func = func;
+        element._memos[cursor].value = func();
+    }
+
+    element._memosCursor++;
+    return element._memos[cursor].value;
+};
+
 export const useState = <T extends any>(defaultValue?: T): [T, (v: T) => T] => {
     const element = GLOBALS.NODE_CURRENT!;
     const cursor = element._statesCursor;
@@ -243,37 +300,6 @@ export const useState = <T extends any>(defaultValue?: T): [T, (v: T) => T] => {
     };
 
     return [state, setState];
-};
-
-export const useEffect = (func: () => Function | void, dependencies: any[]) => {
-    const element = GLOBALS.NODE_CURRENT!;
-    const cursor = element._effectsCursor;
-
-    if (element._effects[cursor] === undefined) {
-        element._effects[cursor] = { depCurr: dependencies, func: func };
-    } else {
-        element._effects[cursor].depPrev = element._effects[cursor].depCurr;
-        element._effects[cursor].depCurr = dependencies;
-        element._effects[cursor].func = func;
-    }
-
-    element._effectsCursor++;
-};
-
-export const useCallback = (func: () => void, dependencies: any[]) => {
-    const element = GLOBALS.NODE_CURRENT!;
-    const cursor = element._callbacksCursor;
-
-    if (element._callbacks[cursor] === undefined) {
-        element._callbacks[cursor] = { depCurr: dependencies, func };
-    } else {
-        element._callbacks[cursor].depPrev = element._callbacks[cursor].depCurr;
-        element._callbacks[cursor].depCurr = dependencies;
-        element._callbacks[cursor].func = func;
-    }
-
-    element._callbacksCursor++;
-    return func;
 };
 
 export default React;
