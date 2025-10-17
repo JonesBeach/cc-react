@@ -4,6 +4,7 @@
 [X] useCallback
 [X] useEffect
 [X] useMemo
-[ ] useRef
+[X] useRef
 [ ] add same bug that doesn't render boolean values properly without `.toString()`
 [ ] upload as npm package
+[ ] add unit tests
