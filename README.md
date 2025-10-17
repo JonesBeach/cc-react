@@ -1,10 +1,8 @@
-# README
-
--   you don't diff by the contents of the element, you diff by where the elements are when comparing 2 virtual DOMs
+# ABOUT
 
 A clone of React, for learning purposes. Currently stands as a non self-contained (meaning it contains additional things unrelated to Creact) repository that hosts a lite version of nodemon (to watch and re-start the express server). Not that this clone does not involve the parsing/compiling step for React, as that is already handled by `tsc`. Everything in `React.tsx` is relevant to the runtime behavior of React only!
 
-## REQUIREMENTS:
+## REQUIREMENTS
 
 -   Linux
 -   Node (v20+)

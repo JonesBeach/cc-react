@@ -104,12 +104,12 @@ const generate = (node: ReactNodeGenerated, container: HTMLElement) => {
         const entries = Object.entries(node.props);
 
         for (const [k, v] of entries) {
-            if (k === "ref") {
-                const value = v as Reference;
+            (el as any)[k] = v;
+
+            if (k === "ref" && v?.current === null) {
+                const value = v as Partial<Reference>;
                 value.current = el;
             }
-
-            (el as any)[k] = v;
         }
     }
 
