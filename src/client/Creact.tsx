@@ -240,11 +240,16 @@ export const useCallback = (func: FunctionLifecycle<void>["func"], dependencies:
     } else {
         element._callbacks[cursor].depPrev = element._callbacks[cursor].depCurr;
         element._callbacks[cursor].depCurr = dependencies;
+
+        if (dependenciesMatch(element._callbacks[cursor])) {
+            return element._callbacks[cursor].func;
+        }
+
         element._callbacks[cursor].func = func;
     }
 
     element._callbacksCursor++;
-    return func;
+    return element._callbacks[cursor].func;
 };
 
 export const useEffect = (func: FunctionLifecycle["func"], dependencies: any[]) => {
