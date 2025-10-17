@@ -20,6 +20,8 @@ declare global {
         _effectsCursor: number;
         _memos: (FunctionLifecycle<any> & { value: any })[];
         _memosCursor: number;
+        _refs: Reference[];
+        _refsCursor: number;
         _states: any[];
         _statesCursor: number;
         children: (ReactNode | unknown)[];
@@ -30,6 +32,8 @@ declare global {
     };
 
     export type ReactNodeGenerated = ReactNode & { element: HTMLElement };
+
+    export type Reference = { current: any };
 
     export namespace JSX {
         export type Element = any;

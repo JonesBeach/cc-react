@@ -13,13 +13,6 @@ const GLOBALS = {
 // ///////////////////
 // //// FUNCTIONS ////
 // ///////////////////
-function isReactElement(arg) {
-    if (typeof arg !== "object") {
-        return false;
-    }
-    const keys = Object.keys(arg);
-    return keys.includes("children") && keys.includes("props");
-}
 function containsNodeOrIsNode(source, target) {
     if (source.children.length > 0) {
         for (const child of source.children) {
@@ -45,6 +38,13 @@ function dependenciesMatch(mount) {
     }
     return true;
 }
+function isReactElement(arg) {
+    if (typeof arg !== "object") {
+        return false;
+    }
+    const keys = Object.keys(arg);
+    return keys.includes("children") && keys.includes("props");
+}
 // TODO:
 // create virtual DOM for current state
 // create virtual DOM for updated state
@@ -61,6 +61,8 @@ const React = {
             _effectsCursor: 0,
             _memos: [],
             _memosCursor: 0,
+            _refs: [],
+            _refsCursor: 0,
             _states: [],
             _statesCursor: 0,
             props,
@@ -86,6 +88,10 @@ const generate = (node, container) => {
     if (node.props !== null) {
         const entries = Object.entries(node.props);
         for (const [k, v] of entries) {
+            if (k === "ref") {
+                const value = v;
+                value.current = el;
+            }
             el[k] = v;
         }
     }
@@ -237,6 +243,13 @@ export const useMemo = (func, dependencies) => {
     }
     element._memosCursor++;
     return element._memos[cursor].value;
+};
+export const useRef = (defaultValue) => {
+    const element = GLOBALS.NODE_CURRENT;
+    const cursor = element._refsCursor;
+    element._refs[cursor] = element._refs[cursor] ?? { current: defaultValue };
+    element._refsCursor++;
+    return element._refs[cursor];
 };
 export const useState = (defaultValue) => {
     const element = GLOBALS.NODE_CURRENT;

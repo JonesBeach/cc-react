@@ -14,15 +14,6 @@ const GLOBALS = {
 // ///////////////////
 // //// FUNCTIONS ////
 // ///////////////////
-function isReactElement(arg: any): boolean {
-    if (typeof arg !== "object") {
-        return false;
-    }
-
-    const keys = Object.keys(arg);
-    return keys.includes("children") && keys.includes("props");
-}
-
 function containsNodeOrIsNode(source: ReactNode, target: ReactNode): boolean {
     if (source.children.length > 0) {
         for (const child of source.children) {
@@ -55,6 +46,15 @@ function dependenciesMatch(mount: FunctionLifecycle) {
     return true;
 }
 
+function isReactElement(arg: any): boolean {
+    if (typeof arg !== "object") {
+        return false;
+    }
+
+    const keys = Object.keys(arg);
+    return keys.includes("children") && keys.includes("props");
+}
+
 // TODO:
 // create virtual DOM for current state
 // create virtual DOM for updated state
@@ -72,6 +72,8 @@ const React = {
             _effectsCursor: 0,
             _memos: [],
             _memosCursor: 0,
+            _refs: [],
+            _refsCursor: 0,
             _states: [],
             _statesCursor: 0,
             props,
@@ -102,6 +104,11 @@ const generate = (node: ReactNodeGenerated, container: HTMLElement) => {
         const entries = Object.entries(node.props);
 
         for (const [k, v] of entries) {
+            if (k === "ref") {
+                const value = v as Reference;
+                value.current = el;
+            }
+
             (el as any)[k] = v;
         }
     }
@@ -287,6 +294,15 @@ export const useMemo = <T extends any>(func: FunctionLifecycle<T>["func"], depen
 
     element._memosCursor++;
     return element._memos[cursor].value;
+};
+
+export const useRef = <T extends any>(defaultValue: T | null): { current: T } => {
+    const element = GLOBALS.NODE_CURRENT!;
+    const cursor = element._refsCursor;
+    element._refs[cursor] = element._refs[cursor] ?? { current: defaultValue };
+    element._refsCursor++;
+
+    return element._refs[cursor];
 };
 
 export const useState = <T extends any>(defaultValue?: T): [T, (v: T) => T] => {

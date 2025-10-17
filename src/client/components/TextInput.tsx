@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "../Creact.tsx";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "../Creact.tsx";
 import Bottom from "./Bottom.tsx";
 
 const TextInput = () => {
     const [text, setText] = useState("default");
     const [bool, setBool] = useState(true);
+    const el = useRef<HTMLElement>(null);
 
     console.log("render", "TextInput", text, bool);
 
@@ -23,6 +24,7 @@ const TextInput = () => {
 
     useEffect(() => {
         console.log("effect", "TextInput", bool);
+        console.log("ref", "TextInput", el);
         callback();
 
         return () => {
@@ -31,11 +33,14 @@ const TextInput = () => {
     }, [bool]);
 
     console.log("memo", memo);
+    console.log("ref outside", el);
 
     return (
         <div>
             <Bottom type={text} />
-            <button onclick={onclick1}>{text}</button>
+            <button ref={el} onclick={onclick1}>
+                {text}
+            </button>
             <button onclick={onclick2}>{bool}</button>
             <input type="text" value={text} />
         </div>
