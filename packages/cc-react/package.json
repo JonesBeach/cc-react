@@ -1,0 +1,24 @@
+{
+    "name": "@ccleanershot/cc-react",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "repository": {
+        "url": "https://github.com/CCleanerShot/cc-react"
+    },
+    "author": "ccleanershot",
+    "license": "MIT",
+    "description": "A lite version of React made for education purposes.",
+    "devDependencies": {
+        "@types/node": "24.7.2",
+        "tsup": "8.5.0",
+        "typescript": "5.9.3"
+    },
+    "keywords": [
+        "react",
+        "react-clone",
+        "education"
+    ]
+}
