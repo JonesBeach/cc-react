@@ -1,15 +1,11 @@
 # folders
 node_modules
-playground
-scripts
-tests
+src
 
 # files
 .gitignore
 .prettierrc
 build.log
 package-lock.json
-TESTS.md
-TODO.md
 tsconfig.json
 tsup.config.js
