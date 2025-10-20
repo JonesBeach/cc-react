@@ -1,4 +1,4 @@
-import React, { render, useState } from "cc-react";
+import React, { render, useState } from "@ccleanershot/cc-react";
 import Bottom from "./components/Bottom.tsx";
 import Container from "./components/Container.tsx";
 import TextInput from "./components/TextInput.tsx";

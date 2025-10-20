@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "cc-react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "@ccleanershot/cc-react";
 import Bottom from "./Bottom.tsx";
 
 const TextInput = () => {

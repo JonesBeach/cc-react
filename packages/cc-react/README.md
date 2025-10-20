@@ -13,7 +13,7 @@ npm install @ccleanershot/cc-react
 To use, use it just like you would with React!
 
 ```
-import React, { render, useState } from "cc-react";
+import React, { render, useState } from "@ccleanershot/cc-react";
 
 type Props = {
     environment: "dev" | "prod";

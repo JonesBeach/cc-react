@@ -1,4 +1,4 @@
-import React from "cc-react";
+import React from "@ccleanershot/cc-react";
 import Inner from "./Inner.tsx";
 
 export const Container = () => {
