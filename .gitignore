@@ -1,4 +1,7 @@
-build.log
+# folders
 dist
 node_modules
 public/js
+
+# files
+*.log

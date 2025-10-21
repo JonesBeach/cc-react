@@ -1,0 +1,11 @@
+**/node_modules
+.github
+
+**/*.log
+**/*Dockerfile
+**/.dockerignore
+**/.gitignore
+**/README.md
+
+**/environments/*
+!**/environments/react

@@ -1,6 +1,7 @@
 {
     "scripts": {
         "dev": "./scripts/dev.sh",
+        "test": "./scripts/test.sh",
         "upload": "./scripts/upload.sh"
     }
 }
