@@ -5,7 +5,6 @@ DIR_HOME=$(pwd)
 DIR_CC_REACT="$DIR_HOME/packages/cc-react"
 DIR_PLAYGROUND="$DIR_HOME/playground"
 
-
 function start() {
     clear
     echo -e "\033[1;30mCleaning for fresh start...\e[0m"
