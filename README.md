@@ -10,6 +10,18 @@ To install:
 npm install @ccleanershot/cc-react
 ```
 
+If you use a `tsconfig.json` file, make sure you have the following set:
+
+```
+{
+    "compilerOptions": {
+        "jsx": "react" // add this line
+    }
+}
+```
+
+## USAGE
+
 To use, use it just like you would with React!
 
 ```
@@ -76,3 +88,7 @@ _Consistent testing environments are often the most critical when doing e2e or i
 To start testing:
 
 [INCOMPLETE]
+
+```
+
+```

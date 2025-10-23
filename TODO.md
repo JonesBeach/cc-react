@@ -10,3 +10,4 @@
 -   [ ] add unit tests
 -   [ ] add optional cdn script instead of the user needing to bundle their module of `cc-react` (react also offers this)
 -   [ ] package types match similarly to the one in React
+-   [ ] `jsx()` and `jsxs()` support in /react-runtime for `jsx: "react-jsx"` flag in `tsconfig.json` (for more info: https://esbuild.github.io/content-types/#jsx)
