@@ -29,7 +29,7 @@ function start() {
     cd "$DIR_CC_REACT"
     npm link > /dev/null
     cd "$DIR_PLAYGROUND"
-    npm link cc-react > /dev/null
+    npm link @ccleanershot/cc-react > /dev/null
     
     cd "$DIR_CC_REACT"
     npx tsc -w > build.log 2>&1 &
