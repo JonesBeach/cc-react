@@ -64,7 +64,7 @@ function before_execute() {
 
 start "\033[1;31mExecution started. Executing commands...\e[0m"
 
-while inotifywait -q -r -e modify,create,delete,move "$DIR_CC_REACT/dist" > /dev/null; do
+while inotifywait -q -r -e modify,create,delete,move "$DIR_CC_REACT/dist" "$DIR_PLAYGROUND/dist" > /dev/null; do
     before_execute
     execute "\033[1;31mDirectory changes detected. Re-executing commands...\e[0m"
 done
