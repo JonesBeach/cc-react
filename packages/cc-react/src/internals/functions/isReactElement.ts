@@ -1,5 +1,5 @@
 export function isReactElement(arg: any): boolean {
-    if (typeof arg !== "object") {
+    if (typeof arg !== "object" || arg === null) {
         return false;
     }
 
