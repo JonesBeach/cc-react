@@ -18,11 +18,11 @@ for environment in $ENVIRONMENTS; do
         BUILD_LOG="$FOLDER/logs/build.log"
         RUN_LOG="$FOLDER/logs/run.log"
 
-        echo -e "\033[1;30m($environment) Removing old containers...\e[0m"
+        echo -e "\033[102;30m($environment) Removing old containers...\e[0m"
         docker rm "$DOCKER_NAME" > /dev/null
-        echo -e "\033[1;30m($environment) Building new images (output in $BUILD_LOG)...\e[0m"
+        echo -e "\033[102;30m($environment) Building new images (output in $BUILD_LOG)...\e[0m"
         docker build -t "$DOCKER_TAG" --debug --file "$FOLDER/$environment.Dockerfile" --progress=plain . &> "$BUILD_LOG"
-        echo -e "\033[1;30m($environment) Running new images (output in $RUN_LOG)...\e[0m"
+        echo -e "\033[102;30m($environment) Running new images (output in $RUN_LOG)...\e[0m"
         docker run --name "$DOCKER_NAME" "$DOCKER_TAG" > /dev/null
         docker logs "$DOCKER_NAME" > "$RUN_LOG"
     ) &
