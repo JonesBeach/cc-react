@@ -87,6 +87,6 @@ _Consistent testing environments are often the most critical when doing e2e or i
 
 To start testing:
 
-[INCOMPLETE]
-[INCOMPLETE]
-[INCOMPLETE]
+-   [INCOMPLETE]
+-   [INCOMPLETE]
+-   [INCOMPLETE]
