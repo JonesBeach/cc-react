@@ -49,7 +49,7 @@ const App = ({ environment }: Props) => {
     );
 };
 
-render(<App environment="dev" />, document.getElementById("myapp")!);
+render(<App environment="dev" />, document.getElementById("root")!);
 ```
 
 Feel free to test beyond the example, and report bugs as you see fit. The goal isn't to clone all of modern-day React, but if the main hooks don't work, that's a problem for the package :).

@@ -28,4 +28,4 @@ const App = ({ environment }: Props) => {
     );
 };
 
-render(<App environment="dev" />, document.getElementById("myapp")!);
+render(<App environment="dev" />, document.getElementById("root")!);
