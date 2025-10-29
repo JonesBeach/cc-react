@@ -9,15 +9,23 @@ To install:
 ```
 npm install @ccleanershot/cc-react
 ```
+### Vite Setup
+If you’re using Vite, start with the React + TypeScript template, then make two small changes:
 
-If you use a `tsconfig.json` file, make sure you have the following set:
-
+1. In `tsconfig.app.json`, updated the JSX option:
 ```
-{
-    "compilerOptions": {
-        "jsx": "react" // add this line
-    }
-}
+// original
+"jsx": "react-jsx" // original
+// updated
+"jsx": "react" // updated
+```
+2. In `vite.config.ts`, remove the `react()` plugin:
+```
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  plugins: [],
+})
 ```
 
 ## USAGE
