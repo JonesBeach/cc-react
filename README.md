@@ -27,6 +27,14 @@ export default defineConfig({
   plugins: [],
 })
 ```
+Otherwise, if you’re not using Vite, just make sure your `tsconfig.json` includes:
+```
+{
+  "compilerOptions": {
+    "jsx": "react"
+  }
+}
+```
 
 ## USAGE
 
